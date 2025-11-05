@@ -8,13 +8,14 @@ BasePage 封装所有页面通用的 Selenium 操作：
 from selenium.webdriver import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.logger import get_logger
+from utils.logger import get_logger, attach_screenshot
 
 
 class BasePage:
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
+        self.logger = get_logger(self.__class__.__name__)  # 每个页面有独立 logger
 
     def open_url(self, url):
         self.logger.info(f"打开网页: {url}")
@@ -24,12 +25,12 @@ class BasePage:
         return self.wait.until(EC.visibility_of_element_located(locator))
 
     def click(self, locator):
-        self.logger.info(f"点击元素: {by}={locator}")
+        self.logger.info(f"点击元素")
         el = self.find(locator)
         el.click()
 
     def send_keys(self, locator, text):
-        self.logger.info(f"输入内容: {text} -> {by}={locator}")
+        self.logger.info(f"输入内容: {text} ")
         el = self.find(locator)
         el.clear()
         el.send_keys(text)

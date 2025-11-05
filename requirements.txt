@@ -1,3 +1,4 @@
+allure-python-commons
 # === 核心依赖 ===
 selenium==4.23.1
 pytest==7.4.0
