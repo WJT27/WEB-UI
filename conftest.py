@@ -30,12 +30,8 @@ logger = get_logger("framework")
 
 @pytest.fixture(scope="session")
 def config():
-    """
-    加载测试框架配置
-    """
-    cfg = load_config()
-    logger.info(f"加载配置：{cfg}")
-    return cfg
+    # 加载配置文件config
+    return load_config()
 
 
 @pytest.fixture(scope="session")
@@ -63,22 +59,3 @@ def driver(config):
     driver.quit()
     logger.info(f"{browser} 浏览器已关闭")
 
-
-# 自动失败截图并附加到 Allure
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    report = outcome.get_result()
-
-    # 只在测试用例执行阶段失败时触发
-    if report.when == "call" and report.failed:
-        driver = item.funcargs.get("driver")
-        if driver:
-            try:
-                screenshot_name = f"{item.name}_{datetime.now():%Y%m%d%H%M%S}.png"
-                screenshot_path = LOG_DIR / screenshot_name
-                driver.save_screenshot(str(screenshot_path))
-                logger.error(f"用例失败，截图保存至：{screenshot_path}")
-                allure.attach.file(str(screenshot_path), name="失败截图", attachment_type=allure.attachment_type.PNG)
-            except Exception as e:
-                logger.error(f"截图失败: {e}")
