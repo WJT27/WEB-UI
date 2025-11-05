@@ -1,0 +1,16 @@
+# === 核心依赖 ===
+selenium==4.23.1
+pytest==7.4.0
+allure-pytest==2.13.5
+webdriver-manager==4.0.2
+
+# === 辅助工具 ===
+requests==2.31.0
+PyYAML==6.0.1
+
+# === 日志与报告 ===
+colorlog==6.7.0
+
+# === 兼容性依赖 ===
+pluggy==1.5.0
+pytest-html==3.2.0
