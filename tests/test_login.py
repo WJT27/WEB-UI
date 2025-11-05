@@ -13,5 +13,5 @@ from pages.login_page import LoginPage
 ])
 def test_login(driver,config,user,pwd):
     lp = LoginPage(driver)
-    lp.open(config["base_url"])
+    lp.open_url(config["base_url"])
     lp.login(user,pwd)

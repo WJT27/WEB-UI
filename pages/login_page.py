@@ -13,8 +13,10 @@ class LoginPage(BasePage):
     password = (By.CSS_SELECTOR, "div input[type = \"password\"]")
     submit = (By.CSS_SELECTOR, "div [type = \"button\"]")
 
-    def open(self,base_url):
-        self.open_url(base_url)
+    #打开网页
+    def open_url(self, url):
+        self.logger.info(f"打开页面: {url}")
+        self.driver.get(url)
 
     def login(self,user,pwd):
         self.send_keys(self.username,text = user)

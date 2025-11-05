@@ -1,0 +1,6 @@
+{
+  "base_url": "",
+  "browser": "chrome",
+  "headless": false,
+  "implicitly_wait": 10
+}

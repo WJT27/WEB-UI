@@ -13,24 +13,25 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 
 #默认配置
 DEFAULTS = {
-    "base_url": "http://132.122.1.215:6300",
+    "base_url": "http://127.0.0.1:8000",
     "browser": "chrome",
     "headless": False,
     "implicitly_wait": 5,
 }
 
 def load_config():
-    """
-    加载配置逻辑：
-    1. 先从项目根目录查找 config.json；
-    2. 如果存在，则覆盖默认配置；
-    3. 支持通过环境变量（BROWSER、HEADLESS）进一步覆盖。
-    """
-    cfg_path = BASE_DIR / "config.json"
+    """加载配置优先级：env > config.json > DEFAULTS"""
+    config = DEFAULTS.copy()
+    cfg_path = BASE_DIR / "config"/ "config.json"
+
+    # 覆盖 config.json 中的配置
     if cfg_path.exists():
-        with open(cfg_path) as f:
-            cfg = json.load(f)
-        DEFAULTS.update(cfg)
-    DEFAULTS['browser'] = os.getenv("BROWSER",DEFAULTS['browser'])
-    DEFAULTS['headless'] = os.getenv("HEADLESS",DEFAULTS['headless']) in ("True", "true","1")
-    return DEFAULTS
+        with open(cfg_path,"r",encoding="utf-8") as f:
+            file_config = json.load(f)
+        config.update(file_config)
+
+    # 环境变量覆盖
+    #config['browser'] = os.getenv("BROWSER",config['browser'])
+    #config['headless'] = os.getenv("HEADLESS",config['headless']) in ("True", "true","1")
+
+    return config
