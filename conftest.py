@@ -59,3 +59,16 @@ def driver(config):
     driver.quit()
     logger.info(f"{browser} 浏览器已关闭")
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        # 拿到测试类实例
+        page = getattr(item.instance, "page", None)
+        if page:
+            try:
+                page.screenshot(name=report.nodeid.replace("::", "_"))
+            except Exception as e:
+                print(f"[截图失败]: {e}")
