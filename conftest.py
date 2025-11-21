@@ -15,6 +15,7 @@ import allure
 
 # 导入你的配置模块和日志工具
 from config.config import load_config
+from utils.browser_factory import create_driver
 from utils.logger import get_logger
 
 # 项目根目录
@@ -37,27 +38,26 @@ def config():
 @pytest.fixture(scope="session")
 def driver(config):
     """
-    初始化 WebDriver
+    初始化 WebDriver，调用 browser_factory.py 进行驱动创建。
     """
     browser = config.get("browser", "chrome").lower()
     headless = config.get("headless", False)
 
-    if browser == "chrome":
-        options = webdriver.ChromeOptions()
-        if headless:
-            options.add_argument("--headless")
-            options.add_argument("--disable-gpu")
-        options.add_argument("--start-maximized")
-        driver_service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=driver_service, options=options)
-    else:
-        raise Exception(f"浏览器 {browser} 不支持")
+    try:
+        # **关键修改：调用外部工厂函数**
+        driver = create_driver(browser=browser, headless=headless)
+    except Exception as e:
+        logger.error(f"浏览器驱动创建失败: {e}")
+        raise
 
     driver.implicitly_wait(config.get("implicitly_wait", 5))
     logger.info(f"{browser} 浏览器初始化完成，headless={headless}")
+
     yield driver
+
     driver.quit()
     logger.info(f"{browser} 浏览器已关闭")
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):

@@ -29,5 +29,5 @@ def create_driver(browser = "chrome",headless = False):
         service = FFService(GeckoDriverManager().install())
         driver = webdriver.Firefox(service=service, options=opts)
     else :
-        raise ValueError(f"Unsupported browser {browser}")
+        raise ValueError(f"不支持浏览器： {browser}")
     return driver

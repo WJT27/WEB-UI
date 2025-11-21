@@ -11,7 +11,7 @@ import allure
 from selenium.webdriver import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.logger import get_logger
+from utils.logger import get_logger, BASE_DIR
 import time
 
 class BasePage:
@@ -26,15 +26,18 @@ class BasePage:
         return self.wait.until(EC.visibility_of_element_located(locator))
 
     #点击元素
+    @allure.step("点击元素 {locator}")
     def click(self, locator):
-        self.logger.info(f"点击元素")
-        el = self.find_element(locator)
+        self.logger.info(f"点击元素: {locator}")
+        # 改用等待元素可点击
+        el = self.wait.until(EC.element_to_be_clickable(locator))
         el.click()
 
     #输入内容
+    @allure.step("向元素 {locator} 输入内容: {text}")
     def send_keys(self, locator, text):
         self.logger.info(f"输入内容: {text} ")
-        el = self.find_element(locator)
+        el = self.wait.until(EC.presence_of_element_located(locator))
         el.clear()
         el.send_keys(text)
 
@@ -43,19 +46,28 @@ class BasePage:
         return self.driver.title
 
     #获取文本
-    def get_text(self,locator):
-        text = self.driver.find(locator).text
-        self.logger.info(f"获取文本: {text}")
+    def get_text(self, locator):
+        # 使用封装了等待的 find_element 方法
+        el = self.find_element(locator)
+        text = el.text
+        self.logger.info(f"获取元素 {locator} 文本: {text}")
         return text
 
+    #截图功能
     def screenshot(self,name = "screenshot"):
         """失败时自动截图，并附加到Allure报告中"""
+
+        # 假设截图目录基于项目根目录的绝对路径
+        SCREENSHOT_DIR = BASE_DIR / "reports" / "screenshots"
+
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         file_name = f"{name}-{timestamp}.png"
-        file_path = f"../resources/screenshots/{file_name}"
+
+        # 使用 Path 对象安全地拼接路径
+        file_path = SCREENSHOT_DIR / file_name
 
         #创建目录
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        os.makedirs(file_path.parent, exist_ok=True)
 
         #driver自带截图功能
         self.driver.save_screenshot(file_path)
