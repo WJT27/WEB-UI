@@ -9,16 +9,18 @@ from pages.base_page import BasePage
 
 
 class LoginPage(BasePage):
-    username = (By.CSS_SELECTOR, "div input[type = \"text\"]")
-    password = (By.CSS_SELECTOR, "div input[type = \"password\"]")
-    submit = (By.CSS_SELECTOR, "div [type = \"button\"]")
+    # --- 元素定位器 ---
+    USERNAME = (By.CSS_SELECTOR, "div input[type = \"text\"]")
+    PASSWORD = (By.CSS_SELECTOR, "div input[type = \"password\"]")
+    SUBMIT = (By.CSS_SELECTOR, "div [type = \"button\"]")
 
     #打开网页
-    def open_url(self, url):
-        self.logger.info(f"打开页面: {url}")
-        self.driver.get(url)
+    def login(self,username,password):
+        self.visit("")
+        self.send_keys(self.USERNAME,text = username)
+        self.send_keys(self.PASSWORD,text = password)
+        self.click(self.SUBMIT)
 
-    def login(self,user,pwd):
-        self.send_keys(self.username,text = user)
-        self.send_keys(self.password,text = pwd)
-        self.click(self.submit)
+    # def get_Login_error(self,locator):
+        # 使用 BasePage 的方法获取文本
+        # return self.get_text(self.ERROR_MESSAGE)

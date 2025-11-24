@@ -1,0 +1,6 @@
+# config/config.yaml
+base_url: "http://example.com"  # 替换为你的测试网址
+browser: "chrome"       # 可选：chrome, firefox
+headless: false         # 是否启用无头模式
+implicitly_wait: 10     # 隐式等待时间（秒）
+screenshot_dir: "reports/screenshots"

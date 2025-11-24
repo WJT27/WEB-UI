@@ -8,8 +8,12 @@ import json
 import os
 from pathlib import Path
 
+import yaml
+
 #项目根目录
 BASE_DIR = Path(__file__).resolve().parents[1]
+CONFIG_PATH = BASE_DIR / "config" / "config.json"
+# CONFIG_PATH = BASE_DIR / "config" / "config.yaml"
 
 #默认配置
 DEFAULTS = {
@@ -20,18 +24,18 @@ DEFAULTS = {
 }
 
 def load_config():
-    """加载配置优先级：env > config.json > DEFAULTS"""
+    # 加载config文件
     config = DEFAULTS.copy()
-    cfg_path = BASE_DIR / "config"/ "config.json"
-
     # 覆盖 config.json 中的配置
-    if cfg_path.exists():
-        with open(cfg_path,"r",encoding="utf-8") as f:
+    if CONFIG_PATH.exists():
+        with open(CONFIG_PATH,"r",encoding="utf-8") as f:
             file_config = json.load(f)
         config.update(file_config)
 
-    # 环境变量覆盖
-    #config['browser'] = os.getenv("BROWSER",config['browser'])
-    #config['headless'] = os.getenv("HEADLESS",config['headless']) in ("True", "true","1")
-
     return config
+
+def load_data(file_name):
+    """加载 data 目录下的 YAML 文件"""
+    data_path = BASE_DIR / "data" / file_name
+    with open(data_path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
